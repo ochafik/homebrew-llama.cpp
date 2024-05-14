@@ -1,9 +1,9 @@
 class Cli < Formula
   desc "Port of Facebook's LLaMA model in C/C++"
   homepage "https://github.com/ggerganov/llama.cpp"
-  url "https://github.com/ochafik/llama.cpp/archive/d328b08a4550effc6e3e2180db2bcd107781816e/cli-tmp.tar.gz"
-  version "d328b08a4550effc6e3e2180db2bcd107781816e"
-  sha256 "68f589bf4ae921cc3a487a7f84e785020d6528f9d3ab69ea51d5e59c8254b227"
+  url "https://github.com/ochafik/llama.cpp/archive/22040277f15efe4e77a428bf5724ffdbe2a1a888/cli-tmp.tar.gz"
+  version "22040277f15efe4e77a428bf5724ffdbe2a1a888"
+  sha256 "bb9ed66a9553b4ac4e86706faf36e707b1f1ef19c9c2a845137ee78963a89e0c"
 
   license "MIT"
 
