@@ -40,7 +40,7 @@ class Clis < Formula
     bin.install "build/bin/eval-callback" => "llama-cpp-eval-callback"
     bin.install "build/bin/export-lora" => "llama-cpp-export-lora"
     bin.install "build/bin/finetune" => "llama-cpp-finetune"
-    bin.install "build/bin/gbnf-validator" => "llama-cpp-gbnf-validator"
+    # bin.install "build/bin/gbnf-validator" => "llama-cpp-gbnf-validator"
     bin.install "build/bin/gguf" => "llama-cpp-gguf"
     bin.install "build/bin/gguf-split" => "llama-cpp-gguf-split"
     bin.install "build/bin/gritlm" => "llama-cpp-gritlm"
