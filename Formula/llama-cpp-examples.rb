@@ -13,16 +13,18 @@ class LlamaCppExamples < Formula
   depends_on "cmake" => :build
   depends_on "curl" => :build
   depends_on "openblas" => :build
+  depends_on "ccache" => :build
   depends_on :macos
 
   def install
     system "cmake", "-B", "build",
+      "-DBUILD_SHARED_LIBS=1",
       "-DLLAMA_BUILD_TESTS=0",
       "-DLLAMA_BUILD_EXAMPLES=1",
       "-DLLAMA_BUILD_SERVER=1",
       "-DLLAMA_CCACHE=0",
       "-DLLAMA_CURL=1",
-      "-DLLAMA_OPENBLAS=1",
+      # "-DLLAMA_OPENBLAS=1",
       "-DLLAMA_METAL_EMBED_LIBRARY=1",
       "-DLLAMA_LTO=1",
       "-DCMAKE_INSTALL_PREFIX=#{prefix}",
