@@ -18,19 +18,19 @@ class Cli < Formula
 
   def install
     system "cmake", "-B", "build",
+      "-DLLAMA_CLI=1",
+      "-DLLAMA_BUILD_TESTS=0",
+      "-DLLAMA_CCACHE=0",
       "-DLLAMA_CURL=1",
       "-DLLAMA_OPENBLAS=1",
-      "-DLLAMA_CLI=1",
-      "-DLLAMA_CCACHE=0",
       "-DLLAMA_METAL_EMBED_LIBRARY=1",
       "-DLLAMA_LTO=1",
-      "-DLLAMA_BUILD_TESTS=0",
       "-DCMAKE_INSTALL_PREFIX=#{prefix}",
       *std_cmake_args
     system "cmake", "--build", "build", "-t", "llama-cpp"
     system "cmake", "--install", "build"
 
-    bin.install "build/bin/llama-cpp" => "llama-cpp"
+    # bin.install "build/bin/llama-cpp" => "llama-cpp"
   end
 
   test do
