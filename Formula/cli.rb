@@ -1,9 +1,10 @@
 class Cli < Formula
   desc "Port of Facebook's LLaMA model in C/C++"
   homepage "https://github.com/ggerganov/llama.cpp"
-  url "https://github.com/ochafik/llama.cpp/archive/refs/heads/cli-tmp.tar.gz"
-  version "d10a913f2175a3fbdbfffb2e20816a9bf955b377"
-  sha256 "341f41ea00b01bb38852da1c43874597ae4f5e4a8f11c1f50c2de741846382d4"
+  url "https://github.com/ochafik/llama.cpp/archive/d328b08a4550effc6e3e2180db2bcd107781816e/cli-tmp.tar.gz"
+  version "d328b08a4550effc6e3e2180db2bcd107781816e"
+  sha256 "68f589bf4ae921cc3a487a7f84e785020d6528f9d3ab69ea51d5e59c8254b227"
+
   license "MIT"
 
   depends_on "cmake" => :build
@@ -15,6 +16,7 @@ class Cli < Formula
       "-DLLAMA_CURL=1",
       "-DLLAMA_OPENBLAS=1",
       "-DLLAMA_CLI=1",
+      "-DLLAMA_CCACHE=0",
       "-DLLAMA_METAL_EMBED_LIBRARY=1",
       "-DLLAMA_LTO=1",
       *std_cmake_args
