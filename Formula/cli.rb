@@ -10,6 +10,7 @@ class Cli < Formula
   depends_on "cmake" => :build
   depends_on "curl" => :build
   depends_on "openblas" => :build
+  depends_on "ccache" => :build
 
   def install
     system "cmake", "-B", "build",
