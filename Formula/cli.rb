@@ -24,6 +24,8 @@ class Cli < Formula
       *std_cmake_args
     system "cmake", "--build", "build", "-t", "llama-cpp"
     system "cmake", "--install", "build"
+
+    bin.install "build/bin/llama-cpp" => "llama-cpp"
   end
 
   test do
