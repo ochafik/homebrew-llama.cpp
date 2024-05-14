@@ -1,4 +1,4 @@
-class Clis < Formula
+class LlamaCppExamples < Formula
   desc "Port of Facebook's LLaMA model in C/C++"
   homepage "https://github.com/ggerganov/llama.cpp"
 
