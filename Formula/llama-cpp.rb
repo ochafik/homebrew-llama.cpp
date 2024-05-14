@@ -14,6 +14,7 @@ class LlamaCpp < Formula
   depends_on "cmake" => :build
   depends_on "curl" => :build
   depends_on "openblas" => :build
+  depends_on "ccache" => :build
   depends_on :macos
 
   def install
