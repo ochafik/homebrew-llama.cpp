@@ -10,7 +10,6 @@ class Cli < Formula
   depends_on "cmake" => :build
   depends_on "curl" => :build
   depends_on "openblas" => :build
-  depends_on "ccache" => :build
 
   def install
     system "cmake", "-B", "build",
@@ -21,6 +20,7 @@ class Cli < Formula
       "-DLLAMA_METAL_EMBED_LIBRARY=1",
       "-DLLAMA_LTO=1",
       "-DLLAMA_BUILD_TESTS=0",
+      "-DCMAKE_INSTALL_PREFIX=#{prefix}",
       *std_cmake_args
     system "cmake", "--build", "build", "-t", "llama-cpp"
     system "cmake", "--install", "build"
