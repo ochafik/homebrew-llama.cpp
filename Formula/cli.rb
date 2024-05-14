@@ -20,6 +20,7 @@ class Cli < Formula
       "-DLLAMA_CCACHE=0",
       "-DLLAMA_METAL_EMBED_LIBRARY=1",
       "-DLLAMA_LTO=1",
+      "-DLLAMA_BUILD_TESTS=0",
       *std_cmake_args
     system "cmake", "--build", "build", "-t", "llama-cpp"
     system "cmake", "--install", "build"
