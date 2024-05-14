@@ -20,6 +20,8 @@ class Cli < Formula
     system "cmake", "-B", "build",
       "-DLLAMA_CLI=1",
       "-DLLAMA_BUILD_TESTS=0",
+      "-DLLAMA_BUILD_EXAMPLES=1",
+      "-DLLAMA_BUILD_SERVER=1",
       "-DLLAMA_CCACHE=0",
       "-DLLAMA_CURL=1",
       "-DLLAMA_OPENBLAS=1",
@@ -30,7 +32,7 @@ class Cli < Formula
     system "cmake", "--build", "build", "-t", "llama-cpp"
     system "cmake", "--install", "build"
 
-    # bin.install "build/bin/llama-cpp" => "llama-cpp"
+    bin.install "build/bin/llama-cpp" => "llama-cpp"
   end
 
   test do
