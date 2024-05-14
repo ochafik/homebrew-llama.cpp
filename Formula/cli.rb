@@ -4,6 +4,7 @@ class Cli < Formula
 
   url "https://github.com/ochafik/llama.cpp.git",
     revision: "663300ca2933cf6513e93b74c8cfe66984247512"
+  version "663300ca2933cf6513e93b74c8cfe66984247512"
 
   head "https://github.com/ochafik/llama.cpp.git",
     branch: "cli"
