@@ -1,42 +1,95 @@
 class LlamaCpp < Formula
-  desc "Port of Facebook's LLaMA model in C/C++"
-  homepage "https://github.com/ggerganov/llama.cpp"
-
+  desc "LLM inference in C/C++ (with MCP and web UI support)"
+  homepage "https://github.com/ochafik/llama.cpp"
   url "https://github.com/ochafik/llama.cpp.git",
-    revision: "663300ca2933cf6513e93b74c8cfe66984247512"
-  version "663300ca2933cf6513e93b74c8cfe66984247512"
-
-  head "https://github.com/ochafik/llama.cpp.git",
-    branch: "cli"
-
+      branch: "web-ui-mcp"
+  version "0.1.0"
   license "MIT"
+  head "https://github.com/ochafik/llama.cpp.git", branch: "web-ui-mcp"
 
   depends_on "cmake" => :build
-  depends_on "curl" => :build
-  depends_on "openblas" => :build
-  depends_on "ccache" => :build
-  depends_on :macos
+  depends_on "pkgconf" => :build
+  depends_on "openssl@3"
 
   def install
-    system "cmake", "-B", "build",
-      "-DLLAMA_CLI=1",
-      "-DLLAMA_BUILD_TESTS=0",
-      "-DLLAMA_BUILD_EXAMPLES=1",
-      "-DLLAMA_BUILD_SERVER=1",
-      # "-DLLAMA_CCACHE=0",
-      "-DLLAMA_CURL=1",
-      # "-DLLAMA_OPENBLAS=1",
-      "-DLLAMA_METAL_EMBED_LIBRARY=1",
-      "-DLLAMA_LTO=1",
-      "-DCMAKE_INSTALL_PREFIX=#{prefix}",
-      *std_cmake_args
-    system "cmake", "--build", "build", "-t", "llama-cpp"
+    args = %W[
+      -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_INSTALL_RPATH=#{rpath}
+      -DGGML_ACCELERATE=#{OS.mac? ? "ON" : "OFF"}
+      -DGGML_ALL_WARNINGS=OFF
+      -DGGML_BLAS=ON
+      -DGGML_BLAS_VENDOR=#{OS.mac? ? "Apple" : "OpenBLAS"}
+      -DGGML_CCACHE=OFF
+      -DGGML_LTO=ON
+      -DGGML_METAL=#{(OS.mac? && !Hardware::CPU.intel?) ? "ON" : "OFF"}
+      -DGGML_METAL_EMBED_LIBRARY=#{OS.mac? ? "ON" : "OFF"}
+      -DGGML_NATIVE=#{build.bottle? ? "OFF" : "ON"}
+      -DLLAMA_ALL_WARNINGS=OFF
+      -DLLAMA_OPENSSL=ON
+    ]
+    args << "-DLLAMA_METAL_MACOSX_VERSION_MIN=#{MacOS.version}" if OS.mac?
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
-    bin.install "build/bin/llama-cpp" => "llama-cpp"
+    libexec.install bin.children
+    bin.install_symlink libexec.children.select { |file|
+                          file.executable? && !file.basename.to_s.start_with?("test-")
+                        }
+
+    # Install newsyslog config for log rotation
+    (etc/"newsyslog.d").mkpath
+    (etc/"newsyslog.d/llama-cpp.conf").write <<~EOS
+      # logfilename                              [owner:group] mode count size(KB) when  flags [/pid_file] [sig_num]
+      #{var}/log/llama-cpp.log                                 644  5     51200    *     GJ
+    EOS
+  end
+
+  def post_install
+    (var/"llama-cpp").mkpath
+    (var/"log").mkpath
+
+    # Generate a random API key if one doesn't exist
+    api_key_file = var/"llama-cpp/api-key.txt"
+    unless api_key_file.exist?
+      require "securerandom"
+      api_key_file.write SecureRandom.hex(32)
+      api_key_file.chmod 0600
+    end
+  end
+
+  service do
+    run [opt_bin/"llama-server", "--offline",
+         "--api-key-file", var/"llama-cpp/api-key.txt",
+         "--host", "127.0.0.1", "--port", "8080", "-ngl", "99"]
+    keep_alive crashed: true
+    working_dir var/"llama-cpp"
+    log_path var/"log/llama-cpp.log"
+    error_log_path var/"log/llama-cpp.log"
+    environment_variables PATH: std_service_path_env
+  end
+
+  def caveats
+    <<~EOS
+      An API key has been generated at:
+        #{var}/llama-cpp/api-key.txt
+
+      To start the llama-server service:
+        brew services start ochafik/llama.cpp/llama-cpp
+
+      The server will listen on http://127.0.0.1:8080
+
+      To test the server:
+        curl -H "Authorization: Bearer $(cat #{var}/llama-cpp/api-key.txt)" \\
+          http://127.0.0.1:8080/v1/models
+
+      Log rotation is configured at:
+        #{etc}/newsyslog.d/llama-cpp.conf
+    EOS
   end
 
   test do
-    system "#{bin}/llama-cpp", "commands"
+    system bin/"llama-cli", "--help"
   end
 end
